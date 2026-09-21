@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi NIÑA ❤️</title>
+    <!-- Reset y Google Fonts -->
+    <link rel="stylesheet" href="https://public.codepenassets.com/css/reset-2.0.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body, html {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            background-color: #0b0b0b;
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1.5s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .screen.active {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 10;
+        }
+        .screen:not(.active) * {
+            pointer-events: none !important;
+        }
+        .inicio-foto {
+            width: min(260px, 72vw);
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 1.5rem;
+            border: 4px solid rgba(255, 255, 255, 0.75);
+            box-shadow: 0 24px 50px rgba(15, 23, 42, 0.18);
+            margin-bottom: 1.75rem;
+        }
+        .secret-button {
+            margin-top: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: #881337;
+            font-weight: 600;
+            border: 1px solid rgba(190, 24, 93, 0.2);
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 8px 20px rgba(136, 19, 55, 0.12);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+        .secret-button:hover {
+            background: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* --- Zoom dinámico para la Pantalla 3 --- */
+        .zoom-in {
+            animation: kenburns-zoom-in 15s infinite linear alternate;
+        }
+        @keyframes kenburns-zoom-in {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.2); }
+        }
+
+        /* --- Estilos Karaoke --- */
+        .karaoke-word {
+            display: inline-block;
+            margin-right: 6px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .karaoke-word.active {
+            color: #ff4d6d;
+            transform: scale(1.15) translateY(-2px);
+            text-shadow: 0 4px 15px rgba(255, 77, 109, 0.8);
+            font-weight: 600;
+        }
+
+        /* --- Lluvia de corazones --- */
+        @keyframes fall {
+            0% { transform: translateY(-10vh) translateX(0); opacity: 1; }
+            100% { transform: translateY(110vh) translateX(20px); opacity: 0; }
+        }
+        .heart {
+            position: fixed;
+            top: -10vh;
+            color: #ff4d6d;
+            font-size: 24px;
+            animation: fall linear infinite;
+            z-index: 10000; 
+            user-select: none;
+            pointer-events: none;
+        }
+
+        /* Pulso y Flotación */
+        @keyframes pulse-soft {
+            0%, 100% { transform: scale(1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+            50% { transform: scale(1.02); box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.35); }
+        }
+        .img-pulse {
+            animation: pulse-soft 4s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        .heroine-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Efecto de Dolor de Cabeza */
+        @keyframes head-hurt-flash {
+            0%, 100% { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); transform: scale(1) translateX(0); }
+            25% { box-shadow: 0 0 50px rgba(239, 68, 68, 0.8); transform: scale(1.02) translateX(-5px); border-color: rgba(239, 68, 68, 0.5); }
+            50% { box-shadow: 0 0 80px rgba(239, 68, 68, 1); transform: scale(1.05) translateX(5px); border-color: rgba(239, 68, 68, 1); }
+            75% { box-shadow: 0 0 50px rgba(239, 68, 68, 0.8); transform: scale(1.02) translateX(-5px); border-color: rgba(239, 68, 68, 0.5); }
+        }
+        .head-hurt-active {
+            animation: head-hurt-flash 0.6s ease-in-out;
+        }
+
+        /* --- ARREGLO CAPAS PANTALLA 4 --- */
+        #screen-4 {
+            display: block !important;
+        }
+        #app-butterflies {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            background-color: transparent;
+        }
+        #app-butterflies canvas {
+            position: absolute !important;
+            z-index: 1 !important;
+            top: 0 !important;
+            left: 0 !important;
+        }
+        .letra-flotante {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999 !important; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none; 
+        }
+        .caja-karaoke {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            padding: 2.5rem 3rem;
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            pointer-events: auto; /* Permite interactuar si es necesario, aunque aquí es solo visual */
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <!-- AUDIO -->
+    <audio id="audio-cancion" src="musica.mp3" preload="auto"></audio>
+
+    <!-- PANTALLA 1 -->
+    <div id="screen-1" class="screen active text-slate-800" style="background-color:#ffeef3;">
+        <img src="celeste.png" alt="Alex" class="inicio-foto">
+        <h1 class="text-4xl font-semibold tracking-wide mb-8">ESPERO QUE TE GUSTE MI NIÑA CON MUCHO AMOR DE TU INGENIERO</h1>
+        <button id="start-btn" class="px-8 py-4 bg-emerald-200 text-slate-800 font-semibold rounded-2xl shadow-lg hover:bg-emerald-300 transition transform hover:scale-105">
+            start
+        </button>
+        <button id="secret-btn" class="secret-button" type="button">
+            botón secreto
+        </button>
+    </div>
+
+    <!-- PANTALLA 2 -->
+    <div id="screen-2" class="screen text-slate-800 relative overflow-hidden" style="background: linear-gradient(135deg, #7c2d12, #9a3412, #451a03); display: flex;">
+        <div class="absolute -top-32 -left-32 w-96 h-96 bg-amber-500/35 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-orange-500/25 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative z-10 flex flex-col md:flex-row items-center justify-center gap-10 w-full px-12">
+            <div id="lyrics-sunrise" class="text-4xl md:text-5xl font-light tracking-wide bg-black/30 backdrop-blur-md p-8 md:p-10 rounded-3xl shadow-2xl border border-white/20 text-white order-2 md:order-1">
+                <span class="karaoke-word" data-time="90.0">It's</span>
+                <span class="karaoke-word" data-time="91.2">this</span>
+                <span class="karaoke-word" data-time="91.8">sunrise</span>
+            </div>
+            <div class="w-[400px] h-[400px] md:w-[500px] md:h-[500px] bg-white/10 backdrop-blur-md border border-white/20 rounded-[2rem] flex items-center justify-center shadow-2xl overflow-hidden p-4 img-pulse order-1 md:order-2">
+                <img src="atardecerjpg.jpg" alt="atardecerjpg.jpg" class="w-full h-full object-cover rounded-[1.5rem] shadow-inner">
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA 3 -->
+    <div id="screen-3" class="screen text-white overflow-hidden" style="display: flex;">
+        <div class="absolute inset-0 bg-cover bg-center zoom-in" style="background-image: url('ojos2.png'); z-index: -1;"></div>
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-[1px]"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row items-center justify-center gap-12 w-full px-8 md:px-16">
+            <div class="w-[320px] h-[320px] md:w-[480px] md:h-[480px] flex items-center justify-center drop-shadow-2xl">
+                <img src="ojos.png" alt="Imagen de ella" class="w-full h-full object-contain">
+            </div>
+            <div class="bg-black/60 backdrop-blur-md p-8 md:p-10 rounded-3xl shadow-2xl max-w-md border border-white/20 text-center md:text-left">
+                <p class="text-3xl md:text-4xl font-medium leading-relaxed text-white">
+                    <span class="karaoke-word" data-time="93.0">And</span>
+                    <span class="karaoke-word" data-time="93.4">those</span>
+                    <span class="karaoke-word" data-time="93.9">brown</span>
+                    <span class="karaoke-word" data-time="94.4">eyes,</span>
+                    <span class="karaoke-word" data-time="95.2">yes...</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA 4: LETRA RESTAURADA -->
+    <div id="screen-4" class="screen text-white overflow-hidden">
+        <div id="app-butterflies"></div>
+        <div class="absolute inset-0 bg-black/30 pointer-events-none" style="z-index: 5;"></div>
+        <div class="letra-flotante">
+            <div class="caja-karaoke">
+                <p class="text-3xl md:text-4xl font-bold leading-relaxed text-white drop-shadow-lg">
+                    <span class="karaoke-word" data-time="97.0">You're</span>
+                    <span class="karaoke-word" data-time="97.4">the</span>
+                    <span class="karaoke-word" data-time="97.7">one</span>
+                    <span class="karaoke-word" data-time="98.1">that</span>
+                    <span class="karaoke-word" data-time="98.4">I</span>
+                    <span class="karaoke-word" data-time="98.8">desire</span><br>
+                    <span class="karaoke-word" data-time="102.0">When</span>
+                    <span class="karaoke-word" data-time="102.3">we</span>
+                    <span class="karaoke-word" data-time="102.7">wake</span>
+                    <span class="karaoke-word" data-time="103.1">up</span><br>
+                    <span class="karaoke-word" data-time="106.0">And</span>
+                    <span class="karaoke-word" data-time="106.3">then</span>
+                    <span class="karaoke-word" data-time="106.7">we</span>
+                    <span class="karaoke-word" data-time="107.1">make</span>
+                    <span class="karaoke-word" data-time="107.5">love</span><br>
+                    <span class="karaoke-word" data-time="110.0">It</span>
+                    <span class="karaoke-word" data-time="110.3">makes</span>
+                    <span class="karaoke-word" data-time="110.7">me</span>
+                    <span class="karaoke-word" data-time="111.1">feel</span>
+                    <span class="karaoke-word" data-time="111.5">so</span>
+                    <span class="karaoke-word" data-time="112.0">nice</span>
+                </p>
+            </div>
+            <p class="text-sm text-white/80 mt-6 tracking-widest uppercase animate-pulse pointer-events-auto">
+            </p>
+        </div>
+    </div>
+
+    <!-- PANTALLA 5 -->
+    <div id="screen-5" class="screen text-white overflow-hidden" style="background-image: url('desierto.jpg'); background-size: cover; background-position: center;">
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <div class="relative z-10 flex flex-col md:flex-row items-center justify-center gap-12 w-full px-8 md:px-16">
+            <div id="agua-container" class="w-64 h-64 md:w-80 md:h-80 flex items-center justify-center drop-shadow-2xl transition-all duration-700 opacity-0 scale-50">
+                <img src="agua.png" alt="Botella de agua" class="w-full h-full object-contain">
+            </div>
+
+            <div class="bg-black/60 backdrop-blur-md p-8 md:p-10 rounded-3xl shadow-2xl max-w-lg border border-white/20 text-center">
+                <p class="text-3xl md:text-4xl font-medium leading-relaxed text-white">
+                    <span class="karaoke-word" data-time="115.0">You're</span>
+                    <span class="karaoke-word" data-time="115.4">my</span>
+                    <span class="karaoke-word" data-time="116.0" style="color: #38bdf8; font-weight: bold; text-shadow: 0 0 15px rgba(56, 189, 248, 0.8);">water</span>
+                    <span class="karaoke-word" data-time="116.8">when</span>
+                    <span class="karaoke-word" data-time="117.2">I'm</span>
+                    <span class="karaoke-word" data-time="117.6">stuck</span>
+                    <span class="karaoke-word" data-time="118.0">in</span>
+                    <span class="karaoke-word" data-time="118.3">the</span>
+                    <span class="karaoke-word" data-time="118.8" style="color: #fb923c;">desert</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA 6 -->
+    <div id="screen-6" class="screen text-white overflow-hidden" style="background-image: url('fondo parque.jpg'); background-size: cover; background-position: center;">
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <div class="relative z-10 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 w-full px-8 md:px-16">
+            <div class="w-64 h-64 md:w-[450px] md:h-[450px] flex items-center justify-center drop-shadow-2xl heroine-float">
+                <img src="heroina.png" alt="Heroína Tylenol" class="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(239,68,68,0.4)]">
+            </div>
+
+            <div id="lyrics-box-6" class="bg-black/70 backdrop-blur-md p-8 md:p-10 rounded-3xl shadow-2xl max-w-lg border border-white/20 text-center transition-all duration-300">
+                <p class="text-3xl md:text-4xl font-medium leading-relaxed text-white">
+                    <span class="karaoke-word" data-time="119.0">You're</span>
+                    <span class="karaoke-word" data-time="119.3">the</span>
+                    <span class="karaoke-word" data-time="119.7" style="color: #ef4444; font-weight: bold; text-shadow: 0 0 15px rgba(239, 68, 68, 0.8);">Tylenol</span>
+                    <span class="karaoke-word" data-time="120.3">I</span>
+                    <span class="karaoke-word" data-time="120.6">take</span><br>
+                    <span class="karaoke-word" data-time="121.0">when</span>
+                    <span class="karaoke-word" data-time="121.3">my</span>
+                    <span class="karaoke-word" data-time="121.6" style="color: #facc15;">head</span>
+                    <span class="karaoke-word" data-time="121.9" style="color: #facc15;">hurts</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE LÓGICA -->
+    <script>
+        const audio = document.getElementById('audio-cancion');
+        let heartInterval;
+        const karaokeWords = document.querySelectorAll('.karaoke-word');
+        let butterfliesInstance = null;
+        let butterfliesLoading = false;
+        let timeUpdateListenerAdded = false;
+        let florAbierta = false;
+        let esperandoFlor = false;
+        const TIEMPO_FINAL_CANCION = 127;
+        const PAUSA_ANTES_DE_FLOR = 3000;
+        
+        const aguaContainer = document.getElementById('agua-container');
+        const lyricsBox6 = document.getElementById('lyrics-box-6');
+
+        document.getElementById('start-btn').addEventListener('click', iniciarTodo);
+        document.getElementById('secret-btn').addEventListener('click', () => {
+            window.location.href = 'amor_secreto.html';
+        });
+
+        function iniciarTodo() {
+            cambiarPantalla('screen-2');
+            if (!timeUpdateListenerAdded) {
+                audio.addEventListener('timeupdate', actualizarSistema);
+                audio.addEventListener('ended', abrirFlor);
+                timeUpdateListenerAdded = true;
+            }
+            reproducirCancion();
+            actualizarSistema();
+        }
+
+        function reproducirCancion() {
+            const saltarAlInicio = () => {
+                try {
+                    audio.currentTime = 90;
+                } catch (error) {
+                    console.warn('No se pudo adelantar la cancion todavia:', error);
+                }
+            };
+
+            if (audio.readyState > 0) {
+                saltarAlInicio();
+            } else {
+                audio.addEventListener('loadedmetadata', saltarAlInicio, { once: true });
+                audio.load();
+            }
+
+            const playPromise = audio.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(error => {
+                    console.warn('El navegador bloqueo la reproduccion del audio:', error);
+                });
+            }
+        }
+
+        function cambiarPantalla(idPantalla) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(idPantalla).classList.add('active');
+
+            if (idPantalla === 'screen-4') {
+                iniciarMariposas();
+            }
+        }
+
+        async function iniciarMariposas() {
+            if (butterfliesInstance || butterfliesLoading) return;
+
+            try {
+                butterfliesLoading = true;
+                const { butterfliesBackground } = await import('https://unpkg.com/threejs-toys@0.0.7/build/threejs-toys.module.cdn.min.js');
+                butterfliesInstance = butterfliesBackground({
+                    el: document.getElementById('app-butterflies'),
+                    eventsEl: document.getElementById('screen-4'),
+                    gpgpuSize: 42,
+                    background: 0x0b0b0b,
+                    material: 'basic',
+                    materialParams: { transparent: true, alphaTest: 0.5 },
+                    texture: 'https://assets.codepen.io/33787/butterflies.png',
+                    textureCount: 4,
+                    wingsScale: [1, 1, 1],
+                    wingsWidthSegments: 8,
+                    wingsHeightSegments: 8,
+                    wingsSpeed: 0.75,
+                    wingsDisplacementScale: 1.25,
+                    noiseCoordScale: 0.01,
+                    noiseTimeCoef: 0.0005,
+                    noiseIntensity: 0.0025,
+                    attractionRadius1: 100,
+                    attractionRadius2: 150,
+                    maxVelocity: 0.1,
+                });
+            } catch (error) {
+                console.warn('No se pudieron cargar las mariposas:', error);
+            } finally {
+                butterfliesLoading = false;
+            }
+        }
+
+        function actualizarSistema() {
+            let currentTime = audio.currentTime;
+
+            if (currentTime >= TIEMPO_FINAL_CANCION) {
+                abrirFlor();
+                return;
+            }
+
+            if (currentTime >= 90 && currentTime < 93) {
+                if (!document.getElementById('screen-2').classList.contains('active')) cambiarPantalla('screen-2');
+                detenerLluviaCorazones();
+            }
+            else if (currentTime >= 93 && currentTime < 97) {
+                if (!document.getElementById('screen-3').classList.contains('active')) cambiarPantalla('screen-3');
+                detenerLluviaCorazones();
+            }
+            else if (currentTime >= 97 && currentTime < 115) {
+                if (!document.getElementById('screen-4').classList.contains('active')) cambiarPantalla('screen-4');
+                if (!heartInterval) iniciarLluviaCorazones();
+            } 
+            else if (currentTime >= 115 && currentTime < 119) {
+                if (!document.getElementById('screen-5').classList.contains('active')) cambiarPantalla('screen-5');
+                detenerLluviaCorazones();
+            }
+            else if (currentTime >= 119 && currentTime <= 126) {
+                if (!document.getElementById('screen-6').classList.contains('active')) cambiarPantalla('screen-6');
+            } else {
+                detenerLluviaCorazones();
+            }
+
+            if (currentTime >= 116.0 && currentTime < 119) {
+                aguaContainer.style.opacity = '1';
+                aguaContainer.style.transform = 'scale(1) rotate(-5deg)';
+            } else {
+                aguaContainer.style.opacity = '0';
+                aguaContainer.style.transform = 'scale(0.5) rotate(0deg)';
+            }
+
+            if (currentTime >= 121.6 && currentTime <= 122.5) {
+                lyricsBox6.classList.add('head-hurt-active');
+            } else {
+                lyricsBox6.classList.remove('head-hurt-active');
+            }
+
+            karaokeWords.forEach(word => {
+                let wordTime = parseFloat(word.getAttribute('data-time'));
+                if (currentTime >= wordTime) {
+                    word.classList.add('active');
+                } else {
+                    word.classList.remove('active');
+                }
+            });
+        }
+
+        function abrirFlor() {
+            if (florAbierta || esperandoFlor) return;
+            esperandoFlor = true;
+            detenerLluviaCorazones();
+            audio.pause();
+            setTimeout(() => {
+                florAbierta = true;
+                window.location.href = 'flor.html?autoplay=1';
+            }, PAUSA_ANTES_DE_FLOR);
+        }
+
+        function iniciarLluviaCorazones() {
+            if (heartInterval) return;
+            heartInterval = setInterval(() => {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                document.body.appendChild(heart);
+
+                setTimeout(() => {
+                    heart.remove();
+                }, 4000);
+            }, 300);
+        }
+
+        function detenerLluviaCorazones() {
+            if (heartInterval) {
+                clearInterval(heartInterval);
+                heartInterval = null;
+            }
+        }
+    </script>
+</body>
+</html>
